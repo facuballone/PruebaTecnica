@@ -10,33 +10,44 @@ namespace PruebaTecnica.Context
 
         }
 
-        public DbSet<Empleado> Empleados { get; set; }
-        public DbSet<Perfil> Perfiles { get; set; }
+        public DbSet<Machine> Machine { get; set; }
+        public DbSet<Component> Component { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Perfil>(tb => {
-                tb.HasKey(col => col.IdPerfil); //declara la llave princippal
-                tb.Property(col => col.IdPerfil).UseIdentityColumn().ValueGeneratedOnAdd(); //aumenta uno en uno
-                tb.Property(col => col.Nombre).HasMaxLength(50); //longitud de 50 caracteres
-                tb.ToTable("Perfil"); //nombre de la tabla en la base de datos
-                tb.HasData(
-                        new Perfil { IdPerfil = 1, Nombre = "Programador Dev" }, // inserta datos
-                        new Perfil { IdPerfil = 2, Nombre = "Programador Senior" }, // inserta datos
-                        new Perfil { IdPerfil = 3, Nombre = "Analista" } // inserta datos
-                    );
+            modelBuilder.Entity<Machine>(tb =>
+            {
+                tb.HasKey(m => m.Id);
+                tb.Property(m => m.Id).UseIdentityColumn().ValueGeneratedOnAdd();
+                tb.Property(m => m.TechnicalLocation).HasMaxLength(100);
+                tb.Property(m => m.Description).HasMaxLength(200);
+                tb.Property(m => m.Model).HasMaxLength(50);
+                tb.Property(m => m.SerialNumber).HasMaxLength(50);
+                tb.Property(m => m.MachineTypeName).HasMaxLength(50);
+                tb.Property(m => m.BrandName).HasMaxLength(50);
+                tb.Property(m => m.Criticality).HasMaxLength(20);
+                tb.Property(m => m.Sector).HasMaxLength(50);
+                tb.ToTable("Machine");
             });
 
-            modelBuilder.Entity<Empleado>(tb => {
-                tb.HasKey(col => col.IdEmpleado); //declara la llave princippal
-                tb.Property(col => col.IdEmpleado).UseIdentityColumn().ValueGeneratedOnAdd(); // aumenta uno en uno
-                tb.Property(col => col.NombreCompleto).HasMaxLength(50); // longitud de 50 caracteres
-                tb.HasOne(col => col.PerfilReferencia).WithMany(p => p.EmpleadosReferencia) //relacion uno a muchos
-                .HasForeignKey(col => col.IdPerfil); //llave foranea
-                tb.ToTable("Empleado"); // nombre de la tabla en la base de datos
+
+            modelBuilder.Entity<Component>(tb =>
+            {
+                tb.HasKey(c => c.Id);
+                tb.Property(c => c.Id).UseIdentityColumn().ValueGeneratedOnAdd();
+                tb.Property(c => c.Part).HasMaxLength(100);
+                tb.Property(c => c.ComponentType).HasMaxLength(50);
+                tb.Property(c => c.BrandName).HasMaxLength(50);
+                tb.Property(c => c.Model).HasMaxLength(50);
+                tb.Property(c => c.Description).HasMaxLength(200);
+                tb.Property(c => c.SerialNumber).HasMaxLength(50);
+                tb.HasOne(c => c.Machine)
+                  .WithMany(m => m.Components)
+                  .HasForeignKey(c => c.MachineId);
+                tb.ToTable("Component");
             });
 
         }
