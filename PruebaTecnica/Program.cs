@@ -13,7 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSql")));
 
 var app = builder.Build();
-
+Console.WriteLine("Iniciando la aplicacion...");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
